@@ -1,0 +1,18 @@
+table supplier
+
+	column s_suppkey
+		dataType: int64
+		sourceColumn: s_suppkey
+
+	column s_nationkey
+		dataType: int64
+		sourceColumn: s_nationkey
+
+	column s_name
+		dataType: string
+		sourceColumn: s_name
+
+	partition supplier = m
+		mode: directQuery
+		source = let Source = Databricks.Catalogs("{{databricks_host}}", "{{databricks_http_path}}", [Implementation="2.0", Protocol="rest"]), cat = Source{[Name="{{source_catalog}}"]}[Data], sch = cat{[Name="{{source_schema}}"]}[Data], tbl = sch{[Name="supplier"]}[Data] in tbl
+

@@ -1,0 +1,20 @@
+# Copy to config.yaml and fill in. No secrets go here: Databricks access uses your Databricks CLI
+# profile, and Power BI access uses your `az login` session.
+
+databricks:
+  profile: DEFAULT                                   # Databricks CLI profile (databricks auth login --profile ...)
+  host: adb-0000000000000000.0.azuredatabricks.net   # workspace host, no https://
+  http_path: /sql/1.0/warehouses/0000000000000000    # SQL warehouse used by Power BI and by the scripts
+
+source:                                              # TPC-H tables. samples.tpch exists in every UC workspace.
+  catalog: samples
+  schema: tpch
+
+target:                                              # where the metric views are created (needs CREATE TABLE)
+  catalog: main
+  schema: pbi_remap_demo
+
+powerbi:
+  workspace_id: 00000000-0000-0000-0000-000000000000 # Power BI / Fabric workspace on Premium, PPU or Fabric capacity
+  prefix: tpch_demo_                                 # prefix for the items this kit creates
+  model_b: mv_lineitem                               # name of the semantic model created by "Publish to Power BI"

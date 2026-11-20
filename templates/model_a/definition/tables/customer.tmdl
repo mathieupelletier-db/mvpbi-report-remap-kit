@@ -1,0 +1,18 @@
+table customer
+
+	column c_custkey
+		dataType: int64
+		sourceColumn: c_custkey
+
+	column c_nationkey
+		dataType: int64
+		sourceColumn: c_nationkey
+
+	column c_name
+		dataType: string
+		sourceColumn: c_name
+
+	partition customer = m
+		mode: directQuery
+		source = let Source = Databricks.Catalogs("{{databricks_host}}", "{{databricks_http_path}}", [Implementation="2.0", Protocol="rest"]), cat = Source{[Name="{{source_catalog}}"]}[Data], sch = cat{[Name="{{source_schema}}"]}[Data], tbl = sch{[Name="customer"]}[Data] in tbl
+

@@ -1,0 +1,18 @@
+table nation
+
+	column n_nationkey
+		dataType: int64
+		sourceColumn: n_nationkey
+
+	column n_regionkey
+		dataType: int64
+		sourceColumn: n_regionkey
+
+	column n_name
+		dataType: string
+		sourceColumn: n_name
+
+	partition nation = m
+		mode: directQuery
+		source = let Source = Databricks.Catalogs("{{databricks_host}}", "{{databricks_http_path}}", [Implementation="2.0", Protocol="rest"]), cat = Source{[Name="{{source_catalog}}"]}[Data], sch = cat{[Name="{{source_schema}}"]}[Data], tbl = sch{[Name="nation"]}[Data] in tbl
+

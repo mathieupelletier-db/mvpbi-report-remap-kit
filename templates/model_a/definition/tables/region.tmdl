@@ -1,0 +1,14 @@
+table region
+
+	column r_regionkey
+		dataType: int64
+		sourceColumn: r_regionkey
+
+	column r_name
+		dataType: string
+		sourceColumn: r_name
+
+	partition region = m
+		mode: directQuery
+		source = let Source = Databricks.Catalogs("{{databricks_host}}", "{{databricks_http_path}}", [Implementation="2.0", Protocol="rest"]), cat = Source{[Name="{{source_catalog}}"]}[Data], sch = cat{[Name="{{source_schema}}"]}[Data], tbl = sch{[Name="region"]}[Data] in tbl
+

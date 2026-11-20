@@ -1,0 +1,32 @@
+table orders
+
+	measure 'Order Count' = DISTINCTCOUNT(orders[o_orderkey])
+		formatString: #,0
+
+	measure 'Avg Order Value' = DIVIDE([Total Revenue], [Order Count])
+		formatString: \$#,0.00
+
+	column o_orderkey
+		dataType: int64
+		sourceColumn: o_orderkey
+
+	column o_custkey
+		dataType: int64
+		sourceColumn: o_custkey
+
+	column o_orderdate
+		dataType: dateTime
+		sourceColumn: o_orderdate
+
+	column o_totalprice
+		dataType: double
+		sourceColumn: o_totalprice
+
+	column o_orderpriority
+		dataType: string
+		sourceColumn: o_orderpriority
+
+	partition orders = m
+		mode: directQuery
+		source = let Source = Databricks.Catalogs("{{databricks_host}}", "{{databricks_http_path}}", [Implementation="2.0", Protocol="rest"]), cat = Source{[Name="{{source_catalog}}"]}[Data], sch = cat{[Name="{{source_schema}}"]}[Data], tbl = sch{[Name="orders"]}[Data] in tbl
+

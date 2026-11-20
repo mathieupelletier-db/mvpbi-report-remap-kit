@@ -1,0 +1,334 @@
+{
+  "target_tables": [
+    "mv_lineitem",
+    "mv_customer"
+  ],
+  "fields": [
+    {
+      "from": {
+        "entity": "customer",
+        "property": "c_custkey",
+        "kind": "Aggregation",
+        "function": 5
+      },
+      "to": {
+        "entity": "mv_customer",
+        "property": "Customer Count",
+        "kind": "Measure"
+      },
+      "basis": "manual: Report A's implicit COUNT of customer keys -> governed measure at customer grain"
+    },
+    {
+      "from": {
+        "entity": "customer",
+        "property": "c_name",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "c_name",
+        "kind": "Column"
+      },
+      "basis": "lineage customer.c_name"
+    },
+    {
+      "from": {
+        "entity": "customer",
+        "property": "c_nationkey",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "c_nationkey",
+        "kind": "Column"
+      },
+      "basis": "lineage customer.c_nationkey"
+    },
+    {
+      "from": {
+        "entity": "lineitem",
+        "property": "l_discount",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "l_discount",
+        "kind": "Column"
+      },
+      "basis": "lineage lineitem.l_discount"
+    },
+    {
+      "from": {
+        "entity": "lineitem",
+        "property": "l_extendedprice",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "l_extendedprice",
+        "kind": "Column"
+      },
+      "basis": "lineage lineitem.l_extendedprice"
+    },
+    {
+      "from": {
+        "entity": "lineitem",
+        "property": "l_orderkey",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "l_orderkey",
+        "kind": "Column"
+      },
+      "basis": "lineage lineitem.l_orderkey"
+    },
+    {
+      "from": {
+        "entity": "lineitem",
+        "property": "l_partkey",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "l_partkey",
+        "kind": "Column"
+      },
+      "basis": "lineage lineitem.l_partkey"
+    },
+    {
+      "from": {
+        "entity": "lineitem",
+        "property": "l_quantity",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "l_quantity",
+        "kind": "Column"
+      },
+      "basis": "lineage lineitem.l_quantity"
+    },
+    {
+      "from": {
+        "entity": "lineitem",
+        "property": "l_suppkey",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "l_suppkey",
+        "kind": "Column"
+      },
+      "basis": "lineage lineitem.l_suppkey"
+    },
+    {
+      "from": {
+        "entity": "nation",
+        "property": "n_name",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "n_name",
+        "kind": "Column"
+      },
+      "basis": "lineage nation.n_name"
+    },
+    {
+      "from": {
+        "entity": "nation",
+        "property": "n_regionkey",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "n_regionkey",
+        "kind": "Column"
+      },
+      "basis": "lineage nation.n_regionkey"
+    },
+    {
+      "from": {
+        "entity": "orders",
+        "property": "o_custkey",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "o_custkey",
+        "kind": "Column"
+      },
+      "basis": "lineage orders.o_custkey"
+    },
+    {
+      "from": {
+        "entity": "orders",
+        "property": "o_orderdate",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "o_orderdate",
+        "kind": "Column"
+      },
+      "basis": "lineage orders.o_orderdate"
+    },
+    {
+      "from": {
+        "entity": "orders",
+        "property": "o_orderkey",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "o_orderkey",
+        "kind": "Column"
+      },
+      "basis": "lineage orders.o_orderkey"
+    },
+    {
+      "from": {
+        "entity": "orders",
+        "property": "o_orderpriority",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "o_orderpriority",
+        "kind": "Column"
+      },
+      "basis": "lineage orders.o_orderpriority"
+    },
+    {
+      "from": {
+        "entity": "orders",
+        "property": "o_totalprice",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "o_totalprice",
+        "kind": "Column"
+      },
+      "basis": "lineage orders.o_totalprice"
+    },
+    {
+      "from": {
+        "entity": "region",
+        "property": "r_name",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "r_name",
+        "kind": "Column"
+      },
+      "basis": "lineage region.r_name"
+    },
+    {
+      "from": {
+        "entity": "orders",
+        "property": "Avg Order Value",
+        "kind": "Measure"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "Avg Order Value",
+        "kind": "Measure"
+      },
+      "basis": "normalized name"
+    },
+    {
+      "from": {
+        "entity": "lineitem",
+        "property": "Line Item Count",
+        "kind": "Measure"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "Line Item Count",
+        "kind": "Measure"
+      },
+      "basis": "normalized name"
+    },
+    {
+      "from": {
+        "entity": "orders",
+        "property": "Order Count",
+        "kind": "Measure"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "Order Count",
+        "kind": "Measure"
+      },
+      "basis": "normalized name"
+    },
+    {
+      "from": {
+        "entity": "lineitem",
+        "property": "Total Revenue",
+        "kind": "Measure"
+      },
+      "to": {
+        "entity": "mv_lineitem",
+        "property": "Total Revenue",
+        "kind": "Measure"
+      },
+      "basis": "normalized name"
+    },
+    {
+      "from": {
+        "entity": "customer",
+        "property": "c_custkey",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_customer",
+        "property": "c_custkey",
+        "kind": "Column"
+      },
+      "basis": "lineage customer.c_custkey"
+    },
+    {
+      "from": {
+        "entity": "customer",
+        "property": "c_name",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_customer",
+        "property": "c_name",
+        "kind": "Column"
+      },
+      "basis": "lineage customer.c_name"
+    },
+    {
+      "from": {
+        "entity": "nation",
+        "property": "n_name",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_customer",
+        "property": "n_name",
+        "kind": "Column"
+      },
+      "basis": "lineage nation.n_name"
+    },
+    {
+      "from": {
+        "entity": "region",
+        "property": "r_name",
+        "kind": "Column"
+      },
+      "to": {
+        "entity": "mv_customer",
+        "property": "r_name",
+        "kind": "Column"
+      },
+      "basis": "lineage region.r_name"
+    }
+  ]
+}

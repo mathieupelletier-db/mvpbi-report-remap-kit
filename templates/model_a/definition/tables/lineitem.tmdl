@@ -1,0 +1,36 @@
+table lineitem
+
+	measure 'Total Revenue' = SUMX(lineitem, lineitem[l_extendedprice] * (1 - lineitem[l_discount]))
+		formatString: \$#,0.00
+
+	measure 'Line Item Count' = COUNTROWS(lineitem)
+		formatString: #,0
+
+	column l_orderkey
+		dataType: int64
+		sourceColumn: l_orderkey
+
+	column l_partkey
+		dataType: int64
+		sourceColumn: l_partkey
+
+	column l_suppkey
+		dataType: int64
+		sourceColumn: l_suppkey
+
+	column l_extendedprice
+		dataType: double
+		sourceColumn: l_extendedprice
+
+	column l_discount
+		dataType: double
+		sourceColumn: l_discount
+
+	column l_quantity
+		dataType: double
+		sourceColumn: l_quantity
+
+	partition lineitem = m
+		mode: directQuery
+		source = let Source = Databricks.Catalogs("{{databricks_host}}", "{{databricks_http_path}}", [Implementation="2.0", Protocol="rest"]), cat = Source{[Name="{{source_catalog}}"]}[Data], sch = cat{[Name="{{source_schema}}"]}[Data], tbl = sch{[Name="lineitem"]}[Data] in tbl
+

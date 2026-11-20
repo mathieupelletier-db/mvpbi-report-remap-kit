@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.0.0/schema.json",
+  "name": "bar_customers_nation",
+  "position": {
+    "x": 240,
+    "y": 168,
+    "z": 1,
+    "width": 760,
+    "height": 440,
+    "tabOrder": 2
+  },
+  "visual": {
+    "visualType": "barChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "nation"
+                    }
+                  },
+                  "Property": "n_name"
+                }
+              },
+              "queryRef": "nation.n_name"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "customer"
+                        }
+                      },
+                      "Property": "c_custkey"
+                    }
+                  },
+                  "Function": 5
+                }
+              },
+              "queryRef": "CountDistinct(customer.c_custkey)",
+              "displayName": "# Customers"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

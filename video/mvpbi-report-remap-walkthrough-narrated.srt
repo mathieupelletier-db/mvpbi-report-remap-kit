@@ -1,0 +1,75 @@
+1
+00:00:01,230 --> 00:00:20,930
+Here's how we repointed an existing Power BI report onto a Unity Catalog metric view. /importBI turns the semantic model into metric views, and publish to Power BI turns them back into a semantic model. But the existing report still points at the old model.
+
+2
+00:00:21,680 --> 00:00:30,430
+This is Report A: seventeen visuals on a star-schema semantic model, running DirectQuery on Databricks SQL.
+
+3
+00:00:31,080 --> 00:00:36,629
+Model A has eight tables, seven relationships, and four DAX measures.
+
+4
+00:00:39,720 --> 00:00:48,070
+Step one. In Genie Code, /importBI reads the model's schema: the tables, the measures, and the relationships.
+
+5
+00:00:50,790 --> 00:00:58,070
+It plans one metric view per fact, and it flags that Order Count changes meaning at line-item grain.
+
+6
+00:01:01,270 --> 00:01:06,050
+Then it hands back the create view statements, which we ran as is.
+
+7
+00:01:17,160 --> 00:01:22,880
+Step two. The metric views land in Unity Catalog, with all four measures.
+
+8
+00:01:23,470 --> 00:01:32,850
+Step three. We publish to Power BI. Fix and publish added the missing order key dimension, so every measure made it across.
+
+9
+00:01:33,580 --> 00:01:41,580
+Model B has one table per metric view, with the measures translated to DAX. And no relationships.
+
+10
+00:01:44,120 --> 00:01:56,870
+That's why a plain rebind breaks. Report A asks for fields that Model B doesn't have. So we rewrite the report's own field references, and push it back, bound to Model B.
+
+11
+00:01:57,840 --> 00:02:05,460
+Step four. The field mapping matches columns on lineage and measures on name, with one manual rule.
+
+12
+00:02:06,150 --> 00:02:14,700
+The rewrite remaps seventeen of eighteen parts, and reports the one cross-fact visual and the slicer scope changes.
+
+13
+00:02:15,460 --> 00:02:25,030
+Then a parity check runs the same DAX for every visual through both models. Sixteen of sixteen return identical rows.
+
+14
+00:02:25,770 --> 00:02:32,190
+And the report was repointed in place: same report ID, now bound to Model B.
+
+15
+00:02:32,830 --> 00:02:38,450
+Here's the same report, now on the metric views. The totals are identical.
+
+16
+00:02:39,250 --> 00:02:49,820
+Customer visuals moved to the customer-grain view: one point five million customers, not the nine hundred ninety-nine thousand who placed orders.
+
+17
+00:02:50,550 --> 00:02:59,580
+Visual and page filters were rewritten too. The one visual that needs two metric views is flagged, not silently wrong.
+
+18
+00:03:00,270 --> 00:03:08,240
+In lineage, the repointed report now reads the published metric view, while the original still uses Model A.
+
+19
+00:03:10,050 --> 00:03:19,550
+So: report repointed in place, and sixteen of sixteen visuals match. The code, the mapping, and the parity results are in the repo.

@@ -1,0 +1,14 @@
+table part
+
+	column p_partkey
+		dataType: int64
+		sourceColumn: p_partkey
+
+	column p_name
+		dataType: string
+		sourceColumn: p_name
+
+	partition part = m
+		mode: directQuery
+		source = let Source = Databricks.Catalogs("{{databricks_host}}", "{{databricks_http_path}}", [Implementation="2.0", Protocol="rest"]), cat = Source{[Name="{{source_catalog}}"]}[Data], sch = cat{[Name="{{source_schema}}"]}[Data], tbl = sch{[Name="part"]}[Data] in tbl
+

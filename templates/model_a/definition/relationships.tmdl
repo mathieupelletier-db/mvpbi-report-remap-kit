@@ -1,0 +1,28 @@
+relationship orders_o_custkey__customer_c_custkey
+	fromColumn: orders.o_custkey
+	toColumn: customer.c_custkey
+
+relationship lineitem_l_orderkey__orders_o_orderkey
+	fromColumn: lineitem.l_orderkey
+	toColumn: orders.o_orderkey
+
+relationship partsupp_ps_partkey__part_p_partkey
+	fromColumn: partsupp.ps_partkey
+	toColumn: part.p_partkey
+
+relationship partsupp_ps_suppkey__supplier_s_suppkey
+	fromColumn: partsupp.ps_suppkey
+	toColumn: supplier.s_suppkey
+
+relationship supplier_s_nationkey__nation_n_nationkey
+	fromColumn: supplier.s_nationkey
+	toColumn: nation.n_nationkey
+
+relationship customer_c_nationkey__nation_n_nationkey
+	fromColumn: customer.c_nationkey
+	toColumn: nation.n_nationkey
+
+relationship nation_n_regionkey__region_r_regionkey
+	fromColumn: nation.n_regionkey
+	toColumn: region.r_regionkey
+
