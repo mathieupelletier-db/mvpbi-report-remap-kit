@@ -11,9 +11,9 @@ pushes it back **bound to the published metric views with the same report ID and
 visual returns the same rows** through both models. It runs end to end on the TPC-H sample data that ships
 with every Unity Catalog workspace (`samples.tpch`), so you can try it before pointing it at your own reports.
 
-> Provided as-is as a sample. It is not an official Databricks product and is not supported.
-> Publishing metric views to Power BI is a **Private Preview** feature: your workspace must be enrolled
-> (ask your Databricks account team) and the preview switched on by a workspace admin.
+> Provided as-is under the [DB License](LICENSE.md); Databricks does not offer official support for it
+> (see [NOTICE.md](NOTICE.md)). Publishing metric views to Power BI is a **Private Preview** feature: your
+> workspace must be enrolled (ask your Databricks account team) and the preview switched on by a workspace admin.
 
 Walkthrough video (3:20, narrated): [video/mvpbi-report-remap-walkthrough-narrated.mp4](video/mvpbi-report-remap-walkthrough-narrated.mp4)
 (recorded on a TPC-H SF10 copy; the kit defaults to `samples.tpch`, so your numbers will differ).
@@ -112,3 +112,15 @@ docs/publish.md        the manual Power BI steps
 tests/                 unit tests for the rewriter, parity query builder and mapping suggester
 video/                 narrated walkthrough + subtitles
 ```
+
+## Third-party libraries
+
+| Library | Purpose | License |
+|---|---|---|
+| [requests](https://github.com/psf/requests) | Fabric and Power BI REST calls | Apache-2.0 |
+| [PyYAML](https://github.com/yaml/pyyaml) | `config.yaml` and metric view YAML parsing | MIT |
+| [pytest](https://github.com/pytest-dev/pytest) | unit tests (development only) | MIT |
+
+## License
+
+© Databricks, Inc. Released under the [DB License](LICENSE.md). See [NOTICE.md](NOTICE.md) and [SECURITY.md](SECURITY.md).
