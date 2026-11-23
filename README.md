@@ -15,9 +15,7 @@ with every Unity Catalog workspace (`samples.tpch`), so you can try it before po
 > (see [NOTICE.md](NOTICE.md)). Publishing metric views to Power BI is a **Private Preview** feature: your
 > workspace must be enrolled (ask your Databricks account team) and the preview switched on by a workspace admin.
 
-<!-- Inline player: drag out/mvpbi-report-remap-walkthrough-github.mp4 (9.3 MB) into this README in the GitHub
-     web editor; GitHub inserts a github.com/user-attachments/... URL on its own line, which renders as a player. -->
-[![Watch the walkthrough (3:20, narrated)](video/poster.png)](video/mvpbi-report-remap-walkthrough-narrated.mp4)
+https://github.com/user-attachments/assets/49f631f9-ece3-4c89-9ed3-75aca71b0b02
 
 *Recorded on a TPC-H SF10 copy; the kit defaults to `samples.tpch`, so your numbers will differ. Subtitles: [video/…narrated.srt](video/mvpbi-report-remap-walkthrough-narrated.srt).*
 
