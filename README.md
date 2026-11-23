@@ -1,46 +1,56 @@
-# Repoint a Power BI report onto Unity Catalog metric views
+# Repoint a Power BI report to Unity Catalog metric views
 
-You moved a Power BI semantic model's business logic into **Unity Catalog metric views** (for example with
-Genie Code `/importBI`) and published them back to Power BI with **Publish to Power BI**. The existing report
-still points at the old semantic model, and rebinding it breaks every visual: a published metric view is one
-table named after the view, with the metric view's field names, while the report asks for the old tables and
-names (`nation[n_name]`, `lineitem[Total Revenue]`).
+You can move the business logic of a Power BI semantic model to Unity Catalog metric views. Genie Code
+`/importBI` makes the metric views. Publish to Power BI makes a new semantic model from the metric views.
+But the old report still points at the old semantic model.
 
-This kit **rewrites the report's own field references** (visuals, filters, sorts, slicers, implicit measures),
-pushes it back **bound to the published metric views with the same report ID and URL**, and then **proves every
-visual returns the same rows** through both models. It runs end to end on the TPC-H sample data that ships
-with every Unity Catalog workspace (`samples.tpch`), so you can try it before pointing it at your own reports.
+A rebind of the old report to the new model does not work. A published metric view is one table, with the
+name of the metric view and its field names. The old report uses the old tables and field names, for example
+`nation[n_name]` and `lineitem[Total Revenue]`. Thus, each visual shows an error after a rebind.
 
-> Provided as-is under the [DB License](LICENSE.md); Databricks does not offer official support for it
-> (see [NOTICE.md](NOTICE.md)). Publishing metric views to Power BI is a **Private Preview** feature: your
-> workspace must be enrolled (ask your Databricks account team) and the preview switched on by a workspace admin.
+This kit changes the field references in the report definition. It changes the visuals, filters, sorts,
+slicers and implicit measures. Then it uploads the report with a link to the published metric views. The
+report keeps its ID and its URL. Then the kit compares the data of each visual through the two models.
+
+The kit uses the TPC-H sample tables that are in all Unity Catalog workspaces (`samples.tpch`). Thus, you can
+try the full procedure before you change a real report.
+
+> This kit is a sample under the [DB License](LICENSE.md). Databricks does not support it
+> (refer to [NOTICE.md](NOTICE.md)). At this time, Publish to Power BI for metric views is in **Private
+> Preview**. Your Databricks account team must enroll your workspace. Then a workspace admin must turn on
+> the preview.
 
 https://github.com/user-attachments/assets/49f631f9-ece3-4c89-9ed3-75aca71b0b02
 
-*Recorded on a TPC-H SF10 copy; the kit defaults to `samples.tpch`, so your numbers will differ. Subtitles: [video/…narrated.srt](video/mvpbi-report-remap-walkthrough-narrated.srt).*
+*The video uses a copy of TPC-H at scale factor 10. The kit uses `samples.tpch` by default. Thus, your
+numbers are different. Subtitles: [video/…narrated.srt](video/mvpbi-report-remap-walkthrough-narrated.srt).*
 
-## What you get
+## Contents of the kit
 
 | | |
 |---|---|
-| Model A + Report A | A star-schema Power BI semantic model over TPC-H (8 tables, 7 relationships, 4 DAX measures, DirectQuery on Databricks SQL) and a 5-page, 17-visual report with visual and page filters, sorts and slicers |
-| Metric views | `mv_lineitem` (line-item grain, the 4 measures) and `mv_customer` (customer grain), ready to publish |
-| Remap | Rewrites Report A onto the published semantic model (Model B), in place or as a new report |
-| Proof | A per-visual DAX parity check between Model A and Model B, plus a remap report listing anything that could not be moved |
+| Model A + Report A | A Power BI semantic model on TPC-H with a star schema: 8 tables, 7 relationships and 4 DAX measures, in DirectQuery mode on Databricks SQL. A report with 5 pages and 17 visuals, with visual filters, page filters, sorts and slicers. |
+| Metric views | `mv_lineitem` (line-item grain, with the 4 measures) and `mv_customer` (customer grain). Both are ready to publish. |
+| Remap | A script that changes Report A to use the published semantic model (Model B). It can change Report A or make a new report. |
+| Parity check | A DAX comparison of each visual between Model A and Model B, and a report of all the parts that the script did not change. |
 
 ## Prerequisites
 
-- **Databricks:** a Unity Catalog workspace with the *Publish Metric View To Powerbi* preview on
-  (Settings → Previews), a SQL warehouse, `CREATE SCHEMA` on a catalog of your choice, and the
-  [Databricks CLI](https://docs.databricks.com/dev-tools/cli/) signed in (`databricks auth login --profile <name>`).
-- **Power BI:** a workspace on Premium, Premium Per User or Fabric capacity, with the XMLA endpoint set to
-  *Read Write*, where you are Contributor or higher; and the [Azure CLI](https://learn.microsoft.com/cli/azure/)
-  signed in to the same Microsoft Entra tenant (`az login`).
-- **Local:** Python 3.10+ and `pip install -r requirements.txt`.
+- **Databricks:**
+  - A Unity Catalog workspace with the *Publish Metric View To Powerbi* preview (Settings > Previews).
+  - A SQL warehouse.
+  - The `CREATE SCHEMA` privilege on a catalog.
+  - The [Databricks CLI](https://docs.databricks.com/dev-tools/cli/), with a login (`databricks auth login --profile <name>`).
+- **Power BI:**
+  - A workspace on Premium, Premium Per User or Fabric capacity, with the XMLA endpoint set to *Read Write*.
+  - The Contributor role or a higher role in this workspace.
+  - The [Azure CLI](https://learn.microsoft.com/cli/azure/), with a login to the same Microsoft Entra tenant (`az login`).
+- **Local computer:** Python 3.10 or later. Run `pip install -r requirements.txt`.
 
-No secrets are stored: SQL runs through your Databricks CLI profile, and Power BI calls use your `az login` session.
+The kit does not keep secrets. The SQL statements use your Databricks CLI profile. The Power BI calls use
+your `az login` session.
 
-## Quickstart
+## Procedure
 
 ```bash
 cp config.example.yaml config.yaml      # fill in workspace host, warehouse, target schema, Power BI workspace
@@ -55,45 +65,56 @@ python3 04_remap_report.py --in-place   # repoint Report A itself (or omit --in-
 python3 05_parity_check.py              # same DAX per visual through both models
 ```
 
-If `02_deploy_powerbi.py` reports that Model A cannot query Databricks, set its data source credentials once
-(docs/publish.md, step 0) and run it again.
+`02_deploy_powerbi.py` can show that Model A cannot query Databricks. In this case, set the data source
+credentials of Model A one time (docs/publish.md, step 0). Then run the script again.
 
 ## Expected result
 
-On TPC-H the remap rewrites **17 of 18 report parts**, and **all 16 remapped visuals return identical rows**
-through Model B. The remaining visual and three slicer interactions are reported, not silently changed:
+With TPC-H, the script changes **17 of the 18 report parts**. **All 16 changed visuals return the same rows**
+through Model B. The script does not change one visual and three slicer connections. It shows them in a
+report:
 
-- **Visuals that combine two facts.** Each published metric view becomes its own Power BI table, with no
-  relationships between them, so a visual can only use one of them. `trend / table_top_nations` needs
-  Avg Order Value (`mv_lineitem`) and a customer count (`mv_customer`), so it is left as is and listed.
-- **Slicers and page filters** only reach visuals on their own table. `out/remap.md` lists each case.
-- **Grain changes hide in implicit measures.** Report A counts `customer[c_custkey]`, which includes customers
-  who never ordered. At line-item grain that count would silently change, which is why there is a separate
-  customer-grain metric view, and why columns are matched on lineage rather than on names.
-- Model A's slicers list a virtual "(Blank)" member that Power BI adds for DirectQuery relationships;
-  Model B has none. The parity check treats this as a match and says so.
+- **Visuals with two facts.** Each published metric view is a separate Power BI table, without relationships
+  between the tables. Thus, a visual can use only one of these tables. `trend / table_top_nations` uses
+  Avg Order Value (`mv_lineitem`) and a customer count (`mv_customer`). The script does not change this visual,
+  and it shows the visual in the report.
+- **Slicers and page filters** filter only the visuals that use the same table. `out/remap.md` shows each case.
+- **Grain changes in implicit measures.** Report A counts `customer[c_custkey]`. This count includes the customers
+  that have no orders. At line-item grain, this count changes. Thus, the kit has a separate metric view at
+  customer grain. Also, the script maps the columns on lineage, not on their names.
+- **The (Blank) member.** The slicers of Model A show a virtual "(Blank)" member. Power BI adds this member for
+  DirectQuery relationships. Model B does not have this member. The parity check shows this difference as a
+  match, and it adds a note.
 
-## How it works
+## How the kit works
 
-1. `src/mvpbi_remap/remap.py` walks the report definition (PBIR) and rewrites every field reference using a
-   mapping (`mapping/mapping.json`): projections, filters with aliases, sort definitions, selector strings and
-   implicit aggregations. For each visual it picks the one published table that can serve all its fields.
-   Labels are kept, including Power BI's default label for implicit measures ("Count of c_custkey").
-2. `04_remap_report.py` pushes the rewritten definition with the Fabric REST API `updateDefinition` call,
-   together with a new dataset reference. Power BI keeps the report's ID and URL.
-3. `src/mvpbi_remap/parity.py` builds, for each visual, the DAX query it effectively runs (group-by columns,
-   measures, visual and page filters) against both models and compares the rows.
-4. `src/mvpbi_remap/suggest.py` proposes the mapping: columns by lineage (source table and column, through the
-   metric view's joins), measures by normalized name. Review it; `mapping/mapping.json` is the reviewed version
-   for TPC-H, with one manual rule (the implicit customer count → the governed Customer Count measure).
+1. `src/mvpbi_remap/remap.py` reads the report definition (PBIR). It changes each field reference with the
+   rules in a mapping file (`mapping/mapping.json`). It changes the visual fields, the filters with aliases,
+   the sort definitions, the selector text and the implicit aggregations. For each visual, it selects the one
+   published table that contains all the fields of the visual. It keeps the labels, and also the default
+   Power BI label of implicit measures ("Count of c_custkey").
+2. `04_remap_report.py` uploads the changed definition with the Fabric REST API (`updateDefinition`). The upload
+   includes a new dataset reference. Power BI keeps the ID and the URL of the report.
+3. `src/mvpbi_remap/parity.py` makes the DAX query of each visual. The query contains the columns that group the
+   data, the measures, the visual filters and the page filters. The script runs the query on the two models and compares
+   the rows.
+4. `src/mvpbi_remap/suggest.py` makes a proposal for the mapping file. It maps the columns on lineage: the source table
+   and the source column, through the joins of the metric view. It maps the measures on their names. Examine the
+   proposal before you use it. `mapping/mapping.json` is the examined version for TPC-H. It has one manual rule:
+   the implicit customer count becomes the governed Customer Count measure.
 
-## Using it on your own report
+## Use the kit on your own report
 
-The remap and parity code is generic. Point `04_remap_report.py` at your report (edit the names in
-`config.yaml` or the script), generate a mapping with `03_suggest_mapping.py`, review it, then run with
-`--dry-run` first. The report must use the **PBIR** format (one `visual.json` per visual, as returned by the
-Fabric `getDefinition` API); reports still in the older single-file `report.json` layout need to be converted
-to PBIR first. Bookmarks, report-level measures, field parameters and calculation groups are not remapped.
+The remap code and the parity code are not specific to TPC-H. To use them on your own report, do these steps:
+
+1. Write the names of your report and models in `config.yaml`, or in the script.
+2. Make the mapping file with `03_suggest_mapping.py`.
+3. Examine the mapping file.
+4. Run `04_remap_report.py --dry-run` first.
+
+The report must use the **PBIR** format, with one `visual.json` file for each visual. The Fabric `getDefinition`
+API returns this format. Convert reports in the older single-file format (`report.json`) to PBIR first. The
+script does not change bookmarks, report-level measures, field parameters or calculation groups.
 
 ## Clean up
 
@@ -101,7 +122,7 @@ to PBIR first. Bookmarks, report-level measures, field parameters and calculatio
 python3 scripts/99_cleanup.py           # deletes the kit's Power BI items and drops the two metric views
 ```
 
-## Layout
+## Structure of the repository
 
 ```
 config.example.yaml    copy to config.yaml (gitignored)
@@ -118,10 +139,10 @@ video/                 narrated walkthrough + subtitles
 
 | Library | Purpose | License |
 |---|---|---|
-| [requests](https://github.com/psf/requests) | Fabric and Power BI REST calls | Apache-2.0 |
-| [PyYAML](https://github.com/yaml/pyyaml) | `config.yaml` and metric view YAML parsing | MIT |
-| [pytest](https://github.com/pytest-dev/pytest) | unit tests (development only) | MIT |
+| [requests](https://github.com/psf/requests) | Calls to the Fabric and Power BI REST APIs | Apache-2.0 |
+| [PyYAML](https://github.com/yaml/pyyaml) | Read `config.yaml` and the metric view YAML | MIT |
+| [pytest](https://github.com/pytest-dev/pytest) | Unit tests (for development only) | MIT |
 
 ## License
 
-© Databricks, Inc. Released under the [DB License](LICENSE.md). See [NOTICE.md](NOTICE.md) and [SECURITY.md](SECURITY.md).
+© Databricks, Inc. This kit is under the [DB License](LICENSE.md). Refer to [NOTICE.md](NOTICE.md) and [SECURITY.md](SECURITY.md).

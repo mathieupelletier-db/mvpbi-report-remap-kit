@@ -1,39 +1,53 @@
 # Manual steps in Power BI and Databricks
 
-## Step 0 (only if needed): sign in Model A's data source
+## Step 0 (only if necessary): Set the data source credentials of Model A
 
-`02_deploy_powerbi.py` creates Model A with the Fabric REST API. Power BI needs credentials for its
-DirectQuery source once. If the script reports that Model A cannot query Databricks:
+`02_deploy_powerbi.py` makes Model A with the Fabric REST API. Power BI needs credentials for the DirectQuery
+source of Model A one time. Do this step only if the script shows that Model A cannot query Databricks.
 
-1. In Power BI, open your workspace, find **`<prefix>model_a`** → **⋯** → **Settings**.
-2. **Data source credentials** → **Edit credentials** → Authentication method **OAuth2** → **Sign in**.
-3. Run `python3 02_deploy_powerbi.py` again; it ends with a smoke-test row of orders and revenue.
+1. In Power BI, open your workspace.
+2. Find **`<prefix>model_a`**.
+3. Select **⋯** > **Settings**.
+4. Select **Data source credentials** > **Edit credentials**.
+5. Set the authentication method to **OAuth2**.
+6. Select **Sign in**.
+7. Run `python3 02_deploy_powerbi.py` again. The last line shows the orders and the revenue from Model A.
 
-## Step 3½: publish the metric views to Power BI
+## Step 3½: Publish the metric views to Power BI
 
-Run this after `01_create_metric_views.py` and `02_deploy_powerbi.py`, before `04_remap_report.py`.
-It needs the *Publish Metric View To Powerbi* preview on in your Databricks workspace.
+Do this step after `01_create_metric_views.py` and `02_deploy_powerbi.py`, and before `04_remap_report.py`.
+The *Publish Metric View To Powerbi* preview must be on in your Databricks workspace.
 
-**First `mv_lineitem`, as a new semantic model:**
+**Publish `mv_lineitem` as a new semantic model:**
 
-1. In Databricks, open **Catalog** → your target catalog and schema → **`mv_lineitem`**.
-2. Select your SQL warehouse at the top of the catalog pane if prompted.
-3. Click **Publish to Power BI** (top right). If asked, click **Connect to Microsoft Entra ID** and consent.
-4. **Power BI workspace:** the workspace from `config.yaml`. A workspace created a few minutes ago can take a
-   moment to appear in the list; reopen the dialog if it is missing.
-5. **Power BI semantic model:** *Publish new semantic model*. **Storage mode:** *DirectQuery*.
-   **Authentication method:** *OAuth*.
-6. Click **Publish to Power BI** and wait for *Successfully published semantic model*.
+1. In Databricks, open **Catalog**.
+2. Open your target catalog and schema, then open **`mv_lineitem`**.
+3. If the catalog pane asks for a SQL warehouse, select your SQL warehouse.
+4. Select **Publish to Power BI** (at the top right).
+5. If the dialog shows **Connect to Microsoft Entra ID**, select it and give consent.
+6. In **Power BI workspace**, select the workspace from `config.yaml`.
+7. In **Power BI semantic model**, select *Publish new semantic model*.
+8. In **Storage mode**, select *DirectQuery*.
+9. In **Authentication method**, select *OAuth*.
+10. Select **Publish to Power BI**.
+11. Wait for the message *Successfully published semantic model*.
 
-No "measures need dimensions" warning should appear: the kit's `mv_lineitem` already exposes every column its
-measures read. If you publish a view produced by `/importBI` yourself and see that warning, **Fix and publish**
-adds the missing dimensions for you (check the measure formats afterwards; re-add any it dropped).
+A new workspace can take some minutes to show in the list. If your workspace is not in the list, close the
+dialog and open it again.
 
-**Then `mv_customer`, into the same semantic model:**
+The dialog does not show the warning "measures need dimensions" for `mv_lineitem` of this kit. The metric
+view already shows all the columns that its measures read. You can see this warning when you publish a metric
+view that `/importBI` made. In this case, select **Fix and publish**. This button adds the necessary dimensions.
+Then examine the measure formats, and add the formats that the button removed.
 
-1. Open **`mv_customer`** in the same schema → **Publish to Power BI**.
-2. Same workspace, then **Update an existing semantic model** → choose **`mv_lineitem`**.
-3. **Publish to Power BI**.
+**Publish `mv_customer` to the same semantic model:**
 
-The semantic model is named `mv_lineitem` and holds two tables, `mv_lineitem` and `mv_customer`, with no
-relationships between them. If you name it differently, set `powerbi.model_b` in `config.yaml`.
+1. Open **`mv_customer`** in the same schema.
+2. Select **Publish to Power BI**.
+3. Select the same workspace.
+4. Select **Update an existing semantic model**.
+5. Select **`mv_lineitem`**.
+6. Select **Publish to Power BI**.
+
+The name of the semantic model is `mv_lineitem`. It has two tables, `mv_lineitem` and `mv_customer`. There are
+no relationships between these tables. If you use a different name, set `powerbi.model_b` in `config.yaml`.
